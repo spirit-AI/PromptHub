@@ -1,6 +1,6 @@
 # Supabase 数据库设置指南
 
-本指南将帮助您在Supabase中设置PromptHub项目所需的数据库表和策略。
+本指南将帮助您在Supabase中设置PromptShare项目所需的数据库表和策略。
 
 ## 📋 数据库表结构
 

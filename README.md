@@ -1,10 +1,10 @@
-# PromptHub - AI Prompt Marketplace
+# PromptShare - AI Prompt Marketplace
 
-PromptHub is a platform for discovering, sharing, and using the best AI prompts. This is the English-only version ready for deployment to Vercel.
+PromptShare is a platform for discovering, sharing, and using the best AI prompts. This is the English-only version ready for deployment to Vercel.
 
-![GitHub](https://img.shields.io/github/license/yourusername/prompthub)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/prompthub)
-![GitHub stars](https://img.shields.io/github/stars/yourusername/prompthub)
+![GitHub](https://img.shields.io/github/license/yourusername/promptshare)
+![GitHub issues](https://img.shields.io/github/issues/yourusername/promptshare)
+![GitHub stars](https://img.shields.io/github/stars/yourusername/promptshare)
 
 ## Features
 
@@ -39,8 +39,8 @@ PromptHub is a platform for discovering, sharing, and using the best AI prompts.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/prompthub.git
-   cd prompthub
+   git clone https://github.com/yourusername/promptshare.git
+   cd promptshare
    ```
 
 2. Install dependencies:
@@ -90,7 +90,7 @@ Refer to `SUPABASE_SETUP.md` for detailed instructions on setting up your Supaba
 ## Project Structure
 
 ```
-my-prompthub/
+promptshare/
 ├── .env.local              # Environment variables (not committed)
 ├── .env.local.example      # Example environment variables
 ├── .gitignore              # Git ignore file

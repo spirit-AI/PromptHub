@@ -111,7 +111,7 @@ const LoginContent = () => {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Sign in to PromptHub</CardTitle>
+        <CardTitle className="text-2xl">Sign in to PromptShare</CardTitle>
         <CardDescription>Sign in with your account to continue</CardDescription>
       </CardHeader>
       <CardContent>

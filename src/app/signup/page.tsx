@@ -92,7 +92,7 @@ const SignupContent = () => {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Sign up for PromptHub</CardTitle>
+        <CardTitle className="text-2xl">Sign up for PromptShare</CardTitle>
         <CardDescription>Create your account to get started</CardDescription>
       </CardHeader>
       <CardContent>

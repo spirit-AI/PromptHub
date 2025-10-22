@@ -6,12 +6,12 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-lg font-semibold mb-4">PromptHub</h3>
+            <h3 className="text-lg font-semibold mb-4">PromptShare</h3>
             <p className="text-gray-600 text-sm mb-4">
               A platform for discovering, sharing, and using the best AI prompts
             </p>
             <p className="text-gray-600 text-sm">
-              © {new Date().getFullYear()} PromptHub. All rights reserved.
+              © {new Date().getFullYear()} PromptShare. All rights reserved.
             </p>
           </div>
           
@@ -45,7 +45,7 @@ export default function Footer() {
         
         <div className="border-t mt-8 pt-6 text-center text-sm text-gray-500">
           <p className="mb-2">Have questions or feedback? Contact us at <a href="mailto:spirit1024@outlook.com" className="text-primary-500 hover:underline">spirit1024@outlook.com</a></p>
-          <p>© {new Date().getFullYear()} PromptHub. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} PromptShare. All rights reserved.</p>
         </div>
       </div>
     </footer>

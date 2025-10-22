@@ -66,7 +66,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-primary-500">PromptHub</span>
+            <span className="text-xl font-bold text-primary-500">PromptShare</span>
           </Link>
 
           {/* Desktop Navigation */}

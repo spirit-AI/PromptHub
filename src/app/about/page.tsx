@@ -17,12 +17,12 @@ export default function AboutPage() {
       
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-12">About PromptHub</h1>
+          <h1 className="text-4xl font-bold text-center mb-12">About PromptShare</h1>
           
           <div className="bg-white rounded-lg shadow-md p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-4">Our Mission</h2>
             <p className="text-gray-700 mb-6">
-              PromptHub is dedicated to creating a vibrant community where AI enthusiasts, 
+              PromptShare is dedicated to creating a vibrant community where AI enthusiasts, 
               developers, and creative professionals can discover, share, and collaborate on 
               the best AI prompts. We believe that the power of AI can be unlocked through 
               well-crafted prompts that inspire innovation and productivity.
@@ -42,7 +42,7 @@ export default function AboutPage() {
               Have questions, suggestions, or feedback? We'd love to hear from you!
             </p>
             <p className="text-gray-700 mb-6">
-              If you encounter any issues or have ideas for improving PromptHub, 
+              If you encounter any issues or have ideas for improving PromptShare, 
               please don't hesitate to reach out to us:
             </p>
             
@@ -65,9 +65,9 @@ export default function AboutPage() {
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium mb-2">What is PromptHub?</h3>
+                <h3 className="text-lg font-medium mb-2">What is PromptShare?</h3>
                 <p className="text-gray-700">
-                  PromptHub is a platform for discovering, sharing, and using AI prompts. 
+                  PromptShare is a platform for discovering, sharing, and using AI prompts. 
                   Whether you're a beginner or an expert, you can find prompts that help 
                   you get the most out of AI tools.
                 </p>
@@ -83,9 +83,9 @@ export default function AboutPage() {
               </div>
               
               <div>
-                <h3 className="text-lg font-medium mb-2">Is there a cost to use PromptHub?</h3>
+                <h3 className="text-lg font-medium mb-2">Is there a cost to use PromptShare?</h3>
                 <p className="text-gray-700">
-                  PromptHub is completely free to use. We may introduce premium features 
+                  PromptShare is completely free to use. We may introduce premium features 
                   in the future, but core functionality will always remain free.
                 </p>
               </div>
