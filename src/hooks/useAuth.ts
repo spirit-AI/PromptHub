@@ -44,7 +44,17 @@ export const useAuth = () => {
     setLoading(true);
     
     try {
-      const { data: { user: supabaseUser }, error } = await supabase.auth.getUser();
+      // 设置超时机制，防止长时间等待
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Authentication timeout')), 10000) // 10秒超时
+      );
+      
+      const getUserPromise = supabase.auth.getUser();
+      
+      const { data: { user: supabaseUser }, error } = await Promise.race([
+        getUserPromise,
+        timeoutPromise
+      ]) as any;
       
       if (error) {
         // 如果是未认证错误，这是正常的，不需要报错
@@ -69,11 +79,20 @@ export const useAuth = () => {
       if (supabaseUser) {
         try {
           // Fetch additional user data from users table
-          const { data: userData, error: userError } = await supabase
+          const timeoutPromise2 = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('User data fetch timeout')), 5000) // 5秒超时
+          );
+          
+          const userDataPromise = supabase
             .from('users')
             .select('*')
             .eq('id', supabaseUser.id)
             .single();
+          
+          const { data: userData, error: userError } = await Promise.race([
+            userDataPromise,
+            timeoutPromise2
+          ]) as any;
           
           if (userError) {
             // 如果users表中没有数据，使用auth用户数据
@@ -147,10 +166,24 @@ export const useAuth = () => {
       return;
     }
     
-    fetchUser();
+    // 添加一个简短的延迟，确保组件完全挂载
+    const timer = setTimeout(() => {
+      fetchUser();
+    }, 100);
     
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [fetchUser, supabase]);
+
+  useEffect(() => {
     // 如果supabase未初始化，不设置监听器
     if (!supabase) {
+      return;
+    }
+    
+    // 只在浏览器环境中执行
+    if (typeof window === 'undefined') {
       return;
     }
     
@@ -175,7 +208,7 @@ export const useAuth = () => {
 
   const signInWithEmail = async (email: string, password: string) => {
     if (!supabase) {
-      throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置');
+      throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration');
     }
     
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -186,7 +219,7 @@ export const useAuth = () => {
     if (error) {
       // 特别处理403错误
       if ('status' in error && (error as any).status === 403) {
-        throw new Error('登录失败：权限不足，请检查您的账户状态');
+        throw new Error('Login failed: Insufficient permissions, please check your account status');
       }
       throw error;
     }
@@ -199,7 +232,7 @@ export const useAuth = () => {
 
   const signInWithGoogle = async () => {
     if (!supabase) {
-      throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置');
+      throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration');
     }
     
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -212,7 +245,7 @@ export const useAuth = () => {
     if (error) {
       // 特别处理403错误
       if ('status' in error && (error as any).status === 403) {
-        throw new Error('Google登录失败：权限不足，请检查您的账户状态');
+        throw new Error('Google login failed: Insufficient permissions, please check your account status');
       }
       throw error;
     }
@@ -221,7 +254,7 @@ export const useAuth = () => {
 
   const signUp = async (email: string, password: string, username: string) => {
     if (!supabase) {
-      throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置');
+      throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration');
     }
     
     const { data, error } = await supabase.auth.signUp({
@@ -238,7 +271,7 @@ export const useAuth = () => {
     if (error) {
       // 特别处理403错误
       if ('status' in error && (error as any).status === 403) {
-        throw new Error('注册失败：权限不足，请检查您的账户状态');
+        throw new Error('Signup failed: Insufficient permissions, please check your account status');
       }
       throw error;
     }
@@ -256,14 +289,14 @@ export const useAuth = () => {
 
   const signOut = async () => {
     if (!supabase) {
-      throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置');
+      throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration');
     }
     
     const { error } = await supabase.auth.signOut();
     if (error) {
       // 特别处理403错误
       if ('status' in error && (error as any).status === 403) {
-        throw new Error('退出登录失败：权限不足');
+        throw new Error('Sign out failed: Insufficient permissions');
       }
       throw error;
     }
@@ -276,10 +309,10 @@ export const useAuth = () => {
     return {
       user: null,
       loading: false,
-      signInWithEmail: async () => { throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置'); },
-      signInWithGoogle: async () => { throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置'); },
-      signUp: async () => { throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置'); },
-      signOut: async () => { throw new Error('系统配置错误：Supabase客户端未初始化，请检查环境变量配置'); },
+      signInWithEmail: async () => { throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration'); },
+      signInWithGoogle: async () => { throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration'); },
+      signUp: async () => { throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration'); },
+      signOut: async () => { throw new Error('System configuration error: Supabase client not initialized, please check environment variable configuration'); },
     };
   }
 

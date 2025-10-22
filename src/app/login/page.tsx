@@ -21,14 +21,30 @@ const LoginContent = () => {
   const [loggingIn, setLoggingIn] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadTimeout, setLoadTimeout] = useState(false);
 
-  // 模拟加载状态检查
+  // 检查是否在浏览器环境中
   useEffect(() => {
     // 检查是否在浏览器环境中
     if (typeof window !== 'undefined') {
       setLoading(false);
     }
   }, []);
+
+  // 添加超时机制，防止加载状态持续太久
+  useEffect(() => {
+    if (loading || authLoading) {
+      const timer = setTimeout(() => {
+        if (loading || authLoading) {
+          setLoadTimeout(true);
+          // 强制设置加载状态为false，使表单可交互
+          setLoading(false);
+        }
+      }, 5000); // 5秒后超时
+
+      return () => clearTimeout(timer);
+    }
+  }, [loading, authLoading]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -41,6 +57,7 @@ const LoginContent = () => {
     e.preventDefault();
     setLoggingIn(true);
     setError('');
+    setLoadTimeout(false); // 重置超时状态
 
     try {
       await signInWithEmail(email, password);
@@ -48,9 +65,11 @@ const LoginContent = () => {
     } catch (err: any) {
       console.error('Login error:', err);
       if (err.message && err.message.includes('Supabase client not initialized')) {
-        setError('系统配置错误：请检查环境变量配置');
+        setError('System configuration error: Please check environment variable configuration');
+      } else if (err.message && err.message.includes('timeout')) {
+        setError('Authentication timeout. Please check your network connection and try again.');
       } else {
-        setError('登录失败，请检查邮箱和密码');
+        setError('Login failed, please check your email and password');
       }
     } finally {
       setLoggingIn(false);
@@ -59,46 +78,55 @@ const LoginContent = () => {
 
   const handleGoogleLogin = async () => {
     setLoggingIn(true);
+    setError('');
+    setLoadTimeout(false); // 重置超时状态
+
     try {
       await signInWithGoogle();
       // Google登录会重定向到OAuth提供商，所以这里不需要处理重定向
     } catch (err: any) {
       console.error('Google login error:', err);
       if (err.message && err.message.includes('Supabase client not initialized')) {
-        setError('系统配置错误：请检查环境变量配置');
+        setError('System configuration error: Please check environment variable configuration');
+      } else if (err.message && err.message.includes('timeout')) {
+        setError('Authentication timeout. Please check your network connection and try again.');
       } else {
-        setError('Google登录失败');
+        setError('Google login failed');
       }
     } finally {
       setLoggingIn(false);
     }
   };
 
-  // 显示加载状态
-  if (loading || authLoading) {
-    return (
-      <div className="text-center">
-        <p className="text-gray-600">正在加载认证信息...</p>
-      </div>
-    );
-  }
-
   // 如果已经登录，显示重定向信息
-  if (user) {
+  if (user && !loading && !authLoading) {
     return (
       <div className="text-center">
-        <p className="text-gray-600">登录成功，正在跳转...</p>
+        <p className="text-gray-600">Login successful, redirecting...</p>
       </div>
     );
   }
 
+  // 显示登录表单（即使在加载状态下也显示表单，除非用户已登录）
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">登录到 PromptHub</CardTitle>
-        <CardDescription>使用您的账户登录以继续</CardDescription>
+        <CardTitle className="text-2xl">Sign in to PromptHub</CardTitle>
+        <CardDescription>Sign in with your account to continue</CardDescription>
       </CardHeader>
       <CardContent>
+        {(loading || authLoading) && !loadTimeout && (
+          <div className="text-center mb-4">
+            <p className="text-gray-600">Loading authentication information...</p>
+          </div>
+        )}
+        
+        {loadTimeout && (
+          <div className="text-center mb-4">
+            <p className="text-yellow-600">Authentication is taking longer than expected. You can try to login below.</p>
+          </div>
+        )}
+        
         {error && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
             {error}
@@ -108,7 +136,7 @@ const LoginContent = () => {
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              邮箱
+              Email
             </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -120,13 +148,14 @@ const LoginContent = () => {
                 placeholder="your@email.com"
                 className="pl-10"
                 required
+                disabled={loggingIn}
               />
             </div>
           </div>
           
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              密码
+              Password
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -135,9 +164,11 @@ const LoginContent = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="At least 6 characters"
                 className="pl-10"
                 required
+                minLength={6}
+                disabled={loggingIn}
               />
             </div>
           </div>
@@ -145,9 +176,9 @@ const LoginContent = () => {
           <Button 
             type="submit" 
             className="w-full bg-primary-500 hover:bg-primary-600"
-            disabled={loggingIn || authLoading}
+            disabled={loggingIn}
           >
-            {loggingIn ? '登录中...' : '登录'}
+            {loggingIn ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
         
@@ -156,7 +187,7 @@ const LoginContent = () => {
             <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">或者</span>
+            <span className="px-2 bg-white text-gray-500">Or</span>
           </div>
         </div>
         
@@ -164,19 +195,20 @@ const LoginContent = () => {
           onClick={handleGoogleLogin}
           variant="outline"
           className="w-full"
-          disabled={loggingIn || authLoading}
+          disabled={loggingIn}
         >
           <Chrome className="w-4 h-4 mr-2" />
-          使用 Google 账户登录
+          Sign in with Google
         </Button>
         
         <div className="mt-6 text-center text-sm text-gray-500">
-          还没有账户？{' '}
+          Don't have an account?{' '}
           <button 
             onClick={() => router.push('/signup')}
             className="text-primary-500 hover:underline"
+            disabled={loggingIn}
           >
-            注册新账户
+            Sign up for a new account
           </button>
         </div>
       </CardContent>
@@ -190,7 +222,7 @@ export default function LoginPage() {
       <Header />
       
       <main className="flex-grow flex items-center justify-center p-4">
-        <Suspense fallback={<div>加载中...</div>}>
+        <Suspense fallback={<div>Loading...</div>}>
           <LoginContent />
         </Suspense>
       </main>
